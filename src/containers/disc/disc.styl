@@ -1,0 +1,24 @@
+@import '~common/stylus/variable'
+
+.disc 
+  position: fixed
+  right 0
+  top: 0
+  left 0
+  bottom: 0
+  z-index: 100
+  background: $color-background
+
+.fade-enter
+  transform: translateX(100%)
+  &.fade-enter-active
+    transform: translateX(0)
+    transition: all .3s ease-in
+
+.fade-exit
+  opacity: 1
+  transform: translateX(0)
+  &.fade-exit-active
+    opacity: 0
+    transform: translateX(-100%)
+    transition: all .3s ease-out
