@@ -11,9 +11,11 @@ export default class Loading extends Component {
   }
   render() {
     return (
-      <div className="loading-wrapper">
-        <img src={require('./loading.gif')} alt="" width="24" height="24" />
-        <p className="desc">{this.props.title}</p>
+      <div className="loading-content">
+        <div className="loading-wrapper">
+          <img src={require('./loading.gif')} alt="" width="24" height="24" />
+          <p className="desc">{this.props.title}</p>
+        </div>
       </div>
     )
   }

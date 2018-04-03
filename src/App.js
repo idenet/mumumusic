@@ -17,7 +17,6 @@ import Singer from 'containers/singer/singer'
 import Rank from 'containers/rank/rank'
 import Search from 'containers/search/search'
 // css
-import 'common/stylus/fade-transition.styl'
 
 class App extends Component {
   render() {

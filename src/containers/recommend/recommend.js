@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Route, withRouter } from 'react-router-dom'
+import { Route } from 'react-router-dom'
 // api
 import { getRecommend, getDiscList } from 'api/recommend'
 import { ERR_OK } from 'api/config'
@@ -13,10 +13,14 @@ import Scroll from 'base/scroll/scroll'
 import Loading from 'base/loading/loading'
 import Disc from 'containers/disc/disc'
 
+// redux
+import { connect } from 'react-redux'
+import { setDisc } from 'store/action'
+
 // css
 import './recommend.styl'
 
-@withRouter
+@connect(state => state, { setDisc }) // 设置state的disc
 export default class Recommend extends Component {
   constructor(props) {
     super(props)
@@ -62,8 +66,9 @@ export default class Recommend extends Component {
     }
   }
   handleClickItem(v) {
-    this.props.history.push(`/recommend/${v.dissid}`)
-    // console.log(this.props.history.go(`/recommend/${v.dissid}`))
+    let { match } = this.props
+    this.props.setDisc(v)
+    this.props.history.push(`${match.url}/${v.dissid}`)
   }
   render() {
     return (
@@ -115,12 +120,10 @@ export default class Recommend extends Component {
             </div>
           </div>
           {!this.state.discList.length && !this.state.recommends.length ? (
-            <div className="loading-container">
-              <Loading title="正在加载..." />
-            </div>
+            <Loading title="正在加载..." />
           ) : null}
         </Scroll>
-        <Route path={`/recommend/:id`} component={Disc} />
+        <Route path={`${this.props.match.url}/:id`} component={Disc} />
       </div>
     )
   }
