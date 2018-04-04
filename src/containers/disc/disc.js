@@ -14,7 +14,7 @@ import MusicList from 'components/music-list/music-list'
 
 import './disc.styl'
 
-@connect(state => state)
+@connect(state => state, null)
 export default class Disc extends Component {
   constructor(props) {
     super(props)
@@ -23,26 +23,20 @@ export default class Disc extends Component {
       songs: []
     }
   }
-  // 另外一种方法
-  // static getDerivedStateFromProps(nextProps, prevState) {
-  //   let { dissid } = nextProps
-  //   if (!dissid) {
-  //     nextProps.history.goBack()
-  //     return {
-  //       isMounted: false
-  //     }
-  //   }
-  //   return { isMounted: true }
-  // }
+  static getDerivedStateFromProps(nextProps, prevState) {
+    let { dissid } = nextProps.disc
+    if (!dissid) {
+      nextProps.history.goBack()
+      return {
+        isMounted: false
+      }
+    }
+    return { isMounted: true }
+  }
   componentDidMount() {
-    // console.log(this.props.dissid)
-    if (!this.props.dissid) {
-      this.props.history.goBack()
+    if (!this.state.isMounted) {
       return
     }
-    // if (!this.state.isMounted) {
-    //   return
-    // }
     this.setState({
       show: true
     })
@@ -71,7 +65,7 @@ export default class Disc extends Component {
     return ret
   }
   render() {
-    const { dissname, imgurl } = this.props
+    const { dissname, imgurl } = this.props.disc
     return (
       <CSSTransition
         in={this.state.show}

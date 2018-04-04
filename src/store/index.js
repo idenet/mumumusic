@@ -1,4 +1,4 @@
 import { combineReducers } from 'redux'
-import * as reducers from './action'
+import * as reducer from './reducers'
 
-export default combineReducers(...reducers)
+export default combineReducers({ ...reducer })

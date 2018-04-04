@@ -5,3 +5,9 @@ export function setDisc(data) {
     dispatch(actions.set_disc(data))
   }
 }
+
+export function setSinger(data) {
+  return dispatch => {
+    dispatch(actions.set_singer(data))
+  }
+}

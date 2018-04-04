@@ -9,7 +9,7 @@ import logger from 'redux-logger'
 import { Provider } from 'react-redux'
 // 子组件
 import App from './App'
-import reducers from './store/reducers'
+import reducers from 'store/index'
 // css
 import 'common/stylus/index.styl'
 

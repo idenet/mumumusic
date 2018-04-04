@@ -1,3 +1,18 @@
 @import "./reset.styl"
 @import "./base.styl"
 @import "./icon.styl"
+
+.app
+  position: fixed
+  top: 0
+  right: 0
+  bottom: 0
+  left: 0
+
+.app-enter
+  opacity: 0.01
+  background: #000000
+  &.app-enter-active
+    opacity: 1
+    background: #ffffff
+    transition: all  0.3s ease-in

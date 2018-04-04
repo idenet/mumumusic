@@ -10,6 +10,7 @@ import { withRouter } from 'react-router-dom'
 // 子组件
 import SongList from 'base/song-list/song-list'
 import Scroll from 'base/scroll/scroll'
+import Loading from 'base/loading/loading'
 
 // util
 import { prefix } from 'common/js/prefix'
@@ -49,10 +50,11 @@ export default class MusicLlist extends Component {
     this.bgLayer = React.createRef()
     this.list = React.createRef()
     this.playBtn = React.createRef()
-  }
-  componentDidMount() {
+    // scroll 常量
     this.listenScroll = true
     this.probeType = 3
+  }
+  componentDidMount() {
     this.style = {
       backgroundImage: `url(${this.props.bgImage})`
     }
@@ -69,9 +71,12 @@ export default class MusicLlist extends Component {
   }
   // 业务操作
   slectItem(song, index) {
-    console.log(song, index)
+    // console.log(song, index)
   }
   onScroll(scroll) {
+    if (!this.props.songs.length) {
+      return
+    }
     let y = scroll.y
     let translateY = Math.max(this.minTranslateY, y) // 当y改变时，最大不超过minTranslateY
     let scale = 1
@@ -102,7 +107,6 @@ export default class MusicLlist extends Component {
     }
     // 上滑scale为1， 下滑y为正，scale为1+
     this.bgImage.current.style[transform] = `scale(${scale})`
-    console.log(zIndex)
     // 当上滑的时候，y为负数，滑倒bgLayer到达标题处，zIndex设置为10，这样就能覆盖住bglayer
     // 下滑y为正，zIndex一定要比bglayer大
     this.bgImage.current.style.zIndex = zIndex
@@ -141,6 +145,7 @@ export default class MusicLlist extends Component {
               select={this.slectItem}
             />
           </div>
+          {!this.props.songs.length ? <Loading title="正在加载..." /> : null}
         </Scroll>
       </div>
     )

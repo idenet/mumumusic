@@ -16,6 +16,9 @@ import Recommend from 'containers/recommend/recommend'
 import Singer from 'containers/singer/singer'
 import Rank from 'containers/rank/rank'
 import Search from 'containers/search/search'
+
+// 播放器
+
 // css
 
 class App extends Component {
@@ -26,7 +29,7 @@ class App extends Component {
           <Header />
           <Tab />
           <TransitionGroup>
-            <CSSTransition classNames="fade" timeout={300}>
+            <CSSTransition classNames="route" timeout={500}>
               <Switch>
                 <Redirect exact path="/" to="/recommend" />
                 <Route path="/recommend" component={Recommend} />

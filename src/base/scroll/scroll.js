@@ -71,19 +71,19 @@ export default class componentName extends Component {
       })
     }
   }
-  _disable() {
+  disable() {
     this.scroll && this.scroll.disable()
   }
-  _enable() {
+  enable() {
     this.scroll && this.scroll.enable()
   }
-  _refresh() {
+  refresh() {
     this.scroll && this.scroll.refresh()
   }
-  _scrollTo() {
+  scrollTo() {
     this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
   }
-  _scrollToElement() {
+  scrollToElement() {
     this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
   }
 
