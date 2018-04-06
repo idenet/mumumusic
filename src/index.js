@@ -13,6 +13,10 @@ import reducers from 'store/index'
 // css
 import 'common/stylus/index.styl'
 
+// import Vconsole from 'vconsole'
+// var vconsole = new Vconsole()
+// console.log(vconsole)
+
 const store = createStore(
   reducers,
   compose(

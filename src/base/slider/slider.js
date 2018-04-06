@@ -61,6 +61,8 @@ export default class Slider extends Component {
   }
 
   _setSliderWidth(isResize) {
+    // 很奇怪这个东西一直报错
+    if (!this.sliderGroup.current) return
     this.childen = this.sliderGroup.current.children
     let width = 0
     let sliderWidth = this.sliderDom.current.clientWidth

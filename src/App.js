@@ -18,7 +18,7 @@ import Rank from 'containers/rank/rank'
 import Search from 'containers/search/search'
 
 // 播放器
-
+import Player from 'components/player/player'
 // css
 
 class App extends Component {
@@ -39,6 +39,7 @@ class App extends Component {
               </Switch>
             </CSSTransition>
           </TransitionGroup>
+          <Player />
         </div>
       </Router>
     )

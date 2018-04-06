@@ -44,7 +44,7 @@ export default class Singer extends Component {
   /**
    * 重新组织singer的数据结构
    *
-   * @author idenet(leimiliya@hotmail.com)
+   * @author 香香鸡
    * @param {any} list
    * @memberof Singer
    */

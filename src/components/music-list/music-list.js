@@ -14,6 +14,11 @@ import Loading from 'base/loading/loading'
 
 // util
 import { prefix } from 'common/js/prefix'
+
+// redux
+import { connect } from 'react-redux'
+import { selectPlay, randomPlay } from 'store/action'
+
 // css
 import './music-list.styl'
 
@@ -22,6 +27,7 @@ const transform = prefix('transform')
 const backdrop = prefix('backdrop-filter')
 
 @withRouter
+@connect(state => state, { selectPlay, randomPlay })
 export default class MusicLlist extends Component {
   static propTypes = {
     title: PropTypes.string,
@@ -43,7 +49,7 @@ export default class MusicLlist extends Component {
     this.handleBack = this.handleBack.bind(this)
     this.slectItem = this.slectItem.bind(this)
     this.onScroll = this.onScroll.bind(this)
-
+    this.handlePlayRandom = this.handlePlayRandom.bind(this)
     // ref
     this.bgImage = React.createRef()
     this.filter = React.createRef()
@@ -69,9 +75,21 @@ export default class MusicLlist extends Component {
   handleBack() {
     this.props.history.goBack()
   }
+  // 随机播放
+  handlePlayRandom() {
+    this.props.randomPlay &&
+      this.props.randomPlay({
+        list: this.props.songs
+      })
+  }
   // 业务操作
   slectItem(song, index) {
-    // console.log(song, index)
+    this.props.selectPlay &&
+      this.props.selectPlay({
+        list: this.props.songs,
+        index,
+        mode: this.props.player.mode
+      })
   }
   onScroll(scroll) {
     if (!this.props.songs.length) {
@@ -121,7 +139,11 @@ export default class MusicLlist extends Component {
         <div className="bg-image" style={this.style} ref={this.bgImage}>
           <div className="play-wrapper">
             {this.props.songs.length > 0 ? (
-              <div className="play" ref={this.playBtn}>
+              <div
+                className="play"
+                ref={this.playBtn}
+                onClick={this.handlePlayRandom}
+              >
                 <i className="icon-play" />
                 <span className="text">随机播放全部</span>
               </div>

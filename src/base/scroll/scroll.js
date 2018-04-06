@@ -27,7 +27,7 @@ export default class componentName extends Component {
     refreshDelay: 20,
     direction: this.DIRECTION_V,
     className: 'scroll-wrapper',
-    onScroll: f => f
+    onScroll: null
   }
   constructor(props) {
     super(props)

@@ -2,11 +2,10 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 // 第三方组件
-import classnames from 'classnames'
 
 // 子组件
 import Scroll from 'base/scroll/scroll'
-// import LazyLoad, { forceCheck } from 'react-lazyload'
+import LazyLoad, { forceCheck } from 'react-lazyload'
 import Loading from 'base/loading/loading'
 //css
 import './list-view.styl'
@@ -62,24 +61,30 @@ export default class ListView extends Component {
       setTimeout(() => {
         this._calculateHeight()
       }, 20)
+    }
+
+    // 滚动实时改变scrollY，进而改变currentIndex值，这两个值都需要判断，如果改变了，需要更新视图改变fixedTitle
+    if (this.state.currentIndex !== nextState.currentIndex) {
       return true
     }
-    // 当scrollY改变的时候，刷新currentIndex的值
     if (this.state.scrollY !== nextState.scrollY) {
-      this._getCurrentIndex(nextState.scrollY)
-      return true
+      return this._getCurrentIndex(nextProps, nextState)
     }
+
     if (this.state.diff !== nextState.diff) {
-      this._getDiff(nextState)
-      return true
+      return this._getDiff(nextProps, nextState)
     }
-    return false
+
+    return true
+  }
+  componentWillUnmount() {
+    clearTimeout(this.timer)
   }
   onScroll(scroll) {
     this.setState({
       scrollY: scroll.y
     })
-    // forceCheck()
+    forceCheck()
   }
   //*************动画 */
   onTouchStart(e) {
@@ -104,7 +109,11 @@ export default class ListView extends Component {
   }
   /**************动画结束 */
   _calculateHeight() {
-    let list = this.listGroup.current.children
+    // 刷新有可能处报错
+    if (!this.listGroup.current) {
+      return false
+    }
+    let list = [...this.listGroup.current.children]
     let height = 0
     this.listHeight.push(height)
     for (let i = 0; i < list.length; i++) {
@@ -113,14 +122,14 @@ export default class ListView extends Component {
       this.listHeight.push(height)
     }
   }
-  _getCurrentIndex(scrollY) {
-    let y = scrollY
+  _getCurrentIndex(nextProps, nextState) {
+    let y = nextState.scrollY
     let listHeight = this.listHeight
     if (y > 0) {
       this.setState({
         currentIndex: 0
       })
-      return
+      return false
     }
     // 在中间滚动
     for (let i = 0; i < listHeight.length - 1; i++) {
@@ -129,23 +138,29 @@ export default class ListView extends Component {
       // 到达下一个区间
       if (-y >= height1 && -y < height2) {
         this.setState({
-          currentIndex: i,
-          diff: height2 + y // diff时时改变
+          diff: height2 + y, // diff时时改变
+          currentIndex: i
         })
-        return
+        return false
       }
     }
     // 当滚动到底部时，且-y大于最后一个元素的上限
     this.setState({
-      currentIndex: listHeight - 2
+      currentIndex: listHeight.length - 2
     })
+    return false
   }
   _getDiff(nextState) {
     let newVal = nextState.diff
     let fixedTop =
       newVal > 0 && newVal < TITLE_HEIGHT ? newVal - TITLE_HEIGHT : 0
-
+    // 让相同的fixedTop不在使用动画
+    if (this.fixedTop === fixedTop) {
+      return false
+    }
+    this.fixedTop = fixedTop
     this.fixed.current.style.transform = `translate3d(0, ${fixedTop}px, 0)`
+    return false
   }
   _scrollTo(index) {
     // forceCheck() // 如果不添加滚动后，不会加载图片
@@ -160,8 +175,13 @@ export default class ListView extends Component {
     }
     this.listview.current.scrollToElement(
       this.listGroup.current.children[index],
-      200
+      0
     )
+    // 滚动后设置scrollY
+    this.setState({
+      scrollY: this.listview.current.scroll.y
+    })
+    forceCheck()
   }
   render() {
     return (
@@ -186,9 +206,9 @@ export default class ListView extends Component {
                           this.props.selectItem(k)
                         }}
                       >
-                        {/* <LazyLoad height={50}> */}
-                        <img src={k.avatar} className="avatar" alt="" />
-                        {/* </LazyLoad> */}
+                        <LazyLoad height={50} throttle={300}>
+                          <img src={k.avatar} className="avatar" alt="" />
+                        </LazyLoad>
                         <span className="name">{k.name}</span>
                       </li>
                     ))}
@@ -207,9 +227,9 @@ export default class ListView extends Component {
             {this.state.shortcutList.length
               ? this.state.shortcutList.map((v, i) => (
                   <li
-                    className={classnames('item', {
-                      current: this.state.currentIndex === i
-                    })}
+                    className={
+                      'item' + (this.state.currentIndex === i ? ' current' : '')
+                    }
                     key={v}
                     data-index={i}
                   >

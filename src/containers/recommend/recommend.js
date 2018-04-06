@@ -28,8 +28,6 @@ export default class Recommend extends Component {
       recommends: [],
       discList: []
     }
-    this.Slider = React.createRef()
-    this.handleOnLoad = this.handleOnLoad.bind(this)
   }
 
   componentDidMount() {
@@ -57,14 +55,7 @@ export default class Recommend extends Component {
       }
     })
   }
-  handleOnLoad() {
-    if (!this.checkLoaded) {
-      this.checkLoaded = true
-      this.timer = setTimeout(() => {
-        this.Slider.current.slider.refresh()
-      }, 60)
-    }
-  }
+  // 不需要监听图片加载事件，高度改变后 bs自动刷新
   handleClickItem(v) {
     let { match } = this.props
     this.props.setDisc(v)
@@ -84,10 +75,10 @@ export default class Recommend extends Component {
             <div className="slider-wrapper">
               <div className="slider-content">
                 {this.state.recommends.length ? (
-                  <Slider ref={this.Slider}>
+                  <Slider>
                     {this.state.recommends.map((v, i) => (
                       <a href={v.linkUrl} key={v.id}>
-                        <img src={v.picUrl} alt="" onLoad={this.handleOnLoad} />
+                        <img src={v.picUrl} alt="" />
                       </a>
                     ))}
                   </Slider>
