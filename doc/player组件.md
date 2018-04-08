@@ -36,3 +36,12 @@ mini 播放器的动画，执行速度会比渲染的快。
     7.  pause 方法解决网页多个音频的问题
     8.  toggle 的时候 歌词也暂停
 6.  实现 cd 和歌词切换的动画
+    1.  计算 move 中 x 的距离来实现动画，取消 y 的移动
+
+## playlist
+
+1.  动画
+    1.  `react-transition-group`实在是太奇怪了，如果不使自定义动画，必须在下级组件中通过标志位控制，然后`exit`动画中，走到`exit`就已经 none 了，必须先置为 block 再置为 none
+2.  功能
+    1.  滚动，在 setstate 为 true 的回调中，refresh scroll 组件
+    2.  监听 scrollToCrrent，当改变歌曲就滚动到当前歌曲

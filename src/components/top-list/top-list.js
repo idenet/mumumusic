@@ -1,41 +1,34 @@
 import React, { Component } from 'react'
-
-// d动画
+import { connect } from 'react-redux'
+// api
+import { getMusicList } from 'api/rank'
+import { ERR_OK } from 'api/config'
+import { createSong, isValidMusic, processSongsUrl } from 'common/js/song'
+// 动画
 import { CSSTransition } from 'react-transition-group'
-
-//子组件
+// 子组件
 import MusicList from 'components/music-list/music-list'
 
-// api
-import { getSingerDetail } from 'api/singer'
-import { ERR_OK } from 'api/config'
-
-//util
-import { createSong, isValidMusic, processSongsUrl } from 'common/js/song'
-
-// redux
-import { connect } from 'react-redux'
-
 @connect(state => state, null)
-export default class SingerDetail extends Component {
+export default class TopList extends Component {
   constructor() {
     super()
     this.state = {
       show: false,
-      songList: []
+      songList: [],
+      rank: true
     }
   }
   componentDidMount() {
     this.setState({
       show: true
     })
-    let { id } = this.props.singer
-    this._getSingerDetail(id)
+    this._getMusicList(this.props.topList.id)
   }
-  _getSingerDetail(id) {
-    getSingerDetail(id).then(res => {
+  _getMusicList(id) {
+    getMusicList(id).then(res => {
       if (res.code === ERR_OK) {
-        processSongsUrl(this._mormalizeSongs(res.data.list)).then(songs => {
+        processSongsUrl(this._normalizeSongs(res.songlist)).then(songs => {
           this.setState({
             songList: songs
           })
@@ -43,10 +36,10 @@ export default class SingerDetail extends Component {
       }
     })
   }
-  _mormalizeSongs(list) {
+  _normalizeSongs(list) {
     let ret = []
     list.forEach(item => {
-      let { musicData } = item
+      const musicData = item.data
       if (isValidMusic(musicData)) {
         ret.push(createSong(musicData))
       }
@@ -54,14 +47,20 @@ export default class SingerDetail extends Component {
     return ret
   }
   render() {
-    let { id, name, avatar } = this.props.singer
+    const { id, topTitle, picUrl } = this.props.topList
+    // 如果id不存在则返回
     if (!id) {
       this.props.history.goBack()
       return null
     }
     return (
       <CSSTransition in={this.state.show} timeout={300} classNames="fade">
-        <MusicList title={name} bgImage={avatar} songs={this.state.songList} />
+        <MusicList
+          title={topTitle}
+          bgImage={picUrl}
+          songs={this.state.songList}
+          rank={this.state.rank}
+        />
       </CSSTransition>
     )
   }

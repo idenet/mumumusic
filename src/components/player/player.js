@@ -25,7 +25,7 @@ const transform = prefix('transform')
 const transitionDuration = prefix('transitionDuration')
 const timeExp = /\[(\d{2}):(\d{2}):(\d{2})]/g
 @playerHOC
-@connect(state => state, { set_fullScreen })
+@connect(null, { set_fullScreen })
 export default class Player extends Component {
   constructor() {
     super()
@@ -49,6 +49,7 @@ export default class Player extends Component {
     this.format = this.format.bind(this)
     this.handlePercentChangeEnd = this.handlePercentChangeEnd.bind(this)
     this.handlePercentChanging = this.handlePercentChanging.bind(this)
+    this.showPlayList = this.showPlayList.bind(this)
     // audio
     this.ready = this.ready.bind(this)
     this.error = this.error.bind(this)
@@ -66,6 +67,7 @@ export default class Player extends Component {
     this.miniWrapper = React.createRef()
     this.miniImage = React.createRef()
     this.progressBar = React.createRef()
+    this.playListRef = React.createRef()
     // 歌词
     this.touchStart = this.touchStart.bind(this)
     this.touchMove = this.touchMove.bind(this)
@@ -461,6 +463,11 @@ export default class Player extends Component {
   handleClickOpen() {
     this.props.set_fullScreen(true)
   }
+  showPlayList(e) {
+    // 这里对子组件使用ref 会定位到高阶组件connect 一种方法使用props传递方法，一中使用forwardRef
+    e.stopPropagation()
+    this.playListRef.current.show()
+  }
   /**************bug 修复 */
   /**
    * 计算内层Image的transform，并同步到外层容器
@@ -639,11 +646,11 @@ export default class Player extends Component {
               </ProgressCircle>
             </div>
             <div className="control">
-              <i className="icon-playlist" />
+              <i className="icon-playlist" onClick={this.showPlayList} />
             </div>
           </div>
         ) : null}
-        <PlayList />
+        <PlayList ref={this.playListRef} />
         <audio
           ref={this.audio}
           onPlaying={this.ready}

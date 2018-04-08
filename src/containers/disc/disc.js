@@ -12,8 +12,6 @@ import { createSong, isValidMusic, processSongsUrl } from 'common/js/song'
 //子组件
 import MusicList from 'components/music-list/music-list'
 
-import './disc.styl'
-
 @connect(state => state, null)
 export default class Disc extends Component {
   constructor(props) {
@@ -23,24 +21,11 @@ export default class Disc extends Component {
       songs: []
     }
   }
-  static getDerivedStateFromProps(nextProps, prevState) {
-    let { dissid } = nextProps.disc
-    if (!dissid) {
-      nextProps.history.goBack()
-      return {
-        isMounted: false
-      }
-    }
-    return { isMounted: true }
-  }
   componentDidMount() {
-    if (!this.state.isMounted) {
-      return
-    }
     this.setState({
       show: true
     })
-    this._getSongList(this.props.match.params.id)
+    this._getSongList(this.props.disc.dissid)
   }
   _getSongList(dissid) {
     getSongList(dissid).then(res => {
@@ -65,19 +50,14 @@ export default class Disc extends Component {
     return ret
   }
   render() {
-    const { dissname, imgurl } = this.props.disc
+    const { dissid, dissname, imgurl } = this.props.disc
+    //如果id不存在则返回
+    if (!dissid) {
+      this.props.history.goBack()
+      return null
+    }
     return (
-      <CSSTransition
-        in={this.state.show}
-        timeout={300}
-        classNames="fade"
-        unmountOnExit
-        onExited={() => {
-          this.setState({
-            show: false
-          })
-        }}
-      >
+      <CSSTransition in={this.state.show} timeout={300} classNames="fade">
         <MusicList title={dissname} bgImage={imgurl} songs={this.state.songs} />
       </CSSTransition>
     )

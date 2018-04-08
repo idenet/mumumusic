@@ -15,12 +15,12 @@ import Disc from 'containers/disc/disc'
 
 // redux
 import { connect } from 'react-redux'
-import { setDisc } from 'store/action'
+import { set_disc } from 'store/action-creator'
 
 // css
 import './recommend.styl'
 
-@connect(state => state, { setDisc }) // 设置state的disc
+@connect(null, { set_disc }) // 设置state的disc
 export default class Recommend extends Component {
   constructor(props) {
     super(props)
@@ -28,6 +28,8 @@ export default class Recommend extends Component {
       recommends: [],
       discList: []
     }
+    this.probeType = 3
+    this.listenScroll = true
   }
 
   componentDidMount() {
@@ -58,7 +60,7 @@ export default class Recommend extends Component {
   // 不需要监听图片加载事件，高度改变后 bs自动刷新
   handleClickItem(v) {
     let { match } = this.props
-    this.props.setDisc(v)
+    this.props.set_disc(v)
     this.props.history.push(`${match.url}/${v.dissid}`)
   }
   render() {
@@ -67,8 +69,8 @@ export default class Recommend extends Component {
         <Scroll
           className="recommend-content"
           data={this.state.discList}
-          listenScroll={true}
-          probeType={3}
+          listenScroll={this.listenScroll}
+          probeType={this.probeType}
           onScroll={() => forceCheck()}
         >
           <div>

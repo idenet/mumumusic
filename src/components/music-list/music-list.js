@@ -92,9 +92,6 @@ export default class MusicLlist extends Component {
       })
   }
   onScroll(scroll) {
-    if (!this.props.songs.length) {
-      return
-    }
     let y = scroll.y
     let translateY = Math.max(this.minTranslateY, y) // 当y改变时，最大不超过minTranslateY
     let scale = 1

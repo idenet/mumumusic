@@ -9,7 +9,12 @@ export const set_singer = singer => ({
   type: types.SET_SINGER,
   payload: singer
 })
+export const set_topList = toplist => ({
+  type: types.SET_TOP_LIST,
+  payload: toplist
+})
 
+// 播放器相关
 export const set_playing = playing => ({
   type: types.SET_PLAYING_STATE,
   payload: playing

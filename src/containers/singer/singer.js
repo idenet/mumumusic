@@ -14,13 +14,13 @@ import { ERR_OK } from 'api/config'
 import Singers from 'common/js/singer'
 
 // action
-import { setSinger } from 'store/action'
+import { set_singer } from 'store/action-creator'
 
 import './singer.styl'
 
 const HOT_SINGER_LEN = 10
 const HOT_NAME = '热门'
-@connect(null, { setSinger })
+@connect(null, { set_singer })
 export default class Singer extends Component {
   constructor(props) {
     super(props)
@@ -99,7 +99,7 @@ export default class Singer extends Component {
   }
   selctSinger(item) {
     const { match } = this.props
-    this.props.setSinger(item)
+    this.props.set_singer(item)
     this.props.history.push(`${match.url}/${item.id}`)
   }
   render() {

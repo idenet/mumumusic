@@ -37,19 +37,13 @@ export default class componentName extends Component {
   }
 
   componentDidMount() {
+    // 价格延时顺滑很多？？？？
     setTimeout(() => {
       this._initScroll()
     }, 20)
   }
-  // componentWillReceiveProps(nextProps) {
-  //   if (this.props.data !== nextProps.data) {
-  //     console.log(nextProps)
-  //     setTimeout(() => {
-  //       this._refresh()
-  //     }, this.props.refreshDelay)
-  //   }
-  // }
   componentWillUnmount() {
+    // 这样music-list滚动时候退出就不会报错
     this.scroll.off('scroll')
     this.scroll = null
   }
@@ -70,6 +64,9 @@ export default class componentName extends Component {
         this.props.onScroll(pos)
       })
     }
+  }
+  stop() {
+    this.scroll && this.scroll.stop()
   }
   disable() {
     this.scroll && this.scroll.disable()

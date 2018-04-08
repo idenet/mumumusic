@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-// import { isForwardRef } from 'react-is'
 
 import {
   set_playing,
@@ -8,6 +7,7 @@ import {
   set_playMode,
   set_playList
 } from 'store/action-creator'
+import { deleteSongList } from 'store/action'
 
 import { playMode } from 'common/js/config'
 import { shuffle } from 'common/js/util'
@@ -39,7 +39,6 @@ export const playerHOC = WrapperComponent => {
       })
       this.props.set_currentIndex(index)
     }
-
     render() {
       const mode = this.props.player.mode
       const modeIcon =
@@ -51,14 +50,42 @@ export const playerHOC = WrapperComponent => {
           changeMode={this.changeMode}
           {...this.props}
           modeIcon={modeIcon}
+          ref={this.props.forwardedRef}
         />
       )
     }
   }
-  return connect(state => state, {
+  const ForwardRefCompoent = connect(state => state, {
     set_currentIndex,
     set_playList,
     set_playMode,
-    set_playing
+    set_playing,
+    deleteSongList
   })(PlayerHOC)
+  return React.forwardRef((props, ref) => (
+    <ForwardRefCompoent {...props} forwardedRef={ref} />
+  ))
+}
+
+export const searchHOC = WrapperComponent => {
+  class Search extends Component {
+    constructor(props) {
+      super(props)
+      this.addQuery = this.addQuery.bind(this)
+      this.searchBox = React.createRef()
+    }
+    addQuery(query) {
+      this.searchBox.current.setQuery(query)
+    }
+    render() {
+      return (
+        <WrapperComponent
+          {...this.props}
+          addQuery={this.addQuery}
+          refSearchbox={this.searchBox}
+        />
+      )
+    }
+  }
+  return connect(state => state, null)(Search)
 }
