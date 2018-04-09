@@ -26,6 +26,11 @@ class componentName extends Compoent {
 12. `axios` ajax 请求
 13. `redux-thunk`和`redux-logger` 前者是`redux`异步请求需要的中间件，后者是 redux 的 logger 日志
 14. `react-transition-group` react 动画组件，难用
+15. `good-storage` localStorage的存储库
+
+
+## 痛苦的领悟
+如果你不使用框架给予的逻辑区书写，即使hack成功了，也是增加了代码量
 
 ## BUG
 
@@ -187,3 +192,7 @@ static getDerivedStateFromProps(nextProps, prevState) {
 
 1.  使用 immutable：很重要，如果是较深数据这个就很有用
 2.  不建议在使用的调用方法，或者判断中直接返回`true`，一般返回 false，在方法以后 return ture 那样一次性更新。如果都返回 true，在最后返回`false`反而会导致卡顿
+
+
+
+

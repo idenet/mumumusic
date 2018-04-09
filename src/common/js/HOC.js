@@ -7,10 +7,10 @@ import {
   set_playMode,
   set_playList
 } from 'store/action-creator'
-import { deleteSongList } from 'store/action'
+import { deleteSongList, saveSearchHistory } from 'store/action'
 
 import { playMode } from 'common/js/config'
-import { shuffle } from 'common/js/util'
+import { shuffle, debounce } from 'common/js/util'
 
 export const playerHOC = WrapperComponent => {
   class PlayerHOC extends Component {
@@ -30,8 +30,6 @@ export const playerHOC = WrapperComponent => {
       }
       this.props.set_playList(list)
       this.resetCurrentIndex(list)
-
-      console.log(mode)
     }
     resetCurrentIndex(list) {
       let index = list.findIndex(v => {
@@ -71,8 +69,25 @@ export const searchHOC = WrapperComponent => {
   class Search extends Component {
     constructor(props) {
       super(props)
+      this.state = {
+        query: ''
+      }
       this.addQuery = this.addQuery.bind(this)
+      this.blurInput = this.blurInput.bind(this)
+      this.saveSearch = this.saveSearch.bind(this)
       this.searchBox = React.createRef()
+    }
+    // 这种算是调用就执行吗
+    onQueryChange = debounce(query => {
+      this.setState({
+        query
+      })
+    }, 300)
+    blurInput() {
+      this.searchBox.current.blur()
+    }
+    saveSearch() {
+      this.props.saveSearchHistory(this.state.query)
     }
     addQuery(query) {
       this.searchBox.current.setQuery(query)
@@ -81,11 +96,15 @@ export const searchHOC = WrapperComponent => {
       return (
         <WrapperComponent
           {...this.props}
+          changeQuery={this.state.query}
           addQuery={this.addQuery}
+          saveSearch={this.saveSearch}
           refSearchbox={this.searchBox}
+          onQueryChange={this.onQueryChange}
+          blurInput={this.blurInput}
         />
       )
     }
   }
-  return connect(state => state, null)(Search)
+  return connect(state => state, { saveSearchHistory })(Search)
 }

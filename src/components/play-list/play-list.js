@@ -31,14 +31,6 @@ export default class PlayList extends Component {
     this.listGroup = React.createRef()
     this.confirm = React.createRef()
   }
-  static getDerivedStateFromProps(nextProps) {
-    if (!nextProps.player.playList.length) {
-      return {
-        showFlag: false
-      }
-    }
-    return null
-  }
   shouldComponentUpdate(nextProps, nextState) {
     const oldSong = this.props.player.currentSong
     const newSong = nextProps.player.currentSong
@@ -59,7 +51,6 @@ export default class PlayList extends Component {
   }
   exit(el) {
     // 离开动画hack 离开动画在exit直接变成了dispaly none
-    // 使用unmountOnExit 并没有什么作用
     el.style.display = 'block'
   }
   exited(el) {

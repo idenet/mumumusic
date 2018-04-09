@@ -12,6 +12,9 @@ import App from './App'
 import reducers from 'store/index'
 // css
 import 'common/stylus/index.styl'
+import { savePlayHistory, saveFavoriteHistory } from 'store/action'
+import { loadPlay, loadFavorite } from 'common/js/cache'
+import { processSongsUrl } from 'common/js/song'
 
 // import Vconsole from 'vconsole'
 // var vconsole = new Vconsole()
@@ -24,6 +27,16 @@ const store = createStore(
     window.devToolsExtension ? window.devToolsExtension() : f => f
   )
 )
+
+const playSongs = loadPlay()
+processSongsUrl(playSongs).then(songs => {
+  savePlayHistory(songs)
+})
+
+const favoriteSongs = loadFavorite()
+processSongsUrl(favoriteSongs).then(songs => {
+  saveFavoriteHistory(songs)
+})
 
 ReactDOM.render(
   <Provider store={store}>

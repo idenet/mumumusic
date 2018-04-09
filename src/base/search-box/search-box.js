@@ -25,15 +25,22 @@ export default class SearchBox extends Component {
     this.setState({
       query
     })
+    // 将改变的query 通过props 传递给父组件
+    this.props.onInput(query)
   }
-  setQuery(query) {
-    console.log(typeof query)
-    // this.setQuery({})
+  setQuery(value) {
+    this.setState({
+      query: value.trim()
+    })
+    // 将改变的query 通过props 传递给父组件 注意 set的时候也要传
+    this.props.onInput(value.trim())
   }
   handleClear() {
     this.setState({
       query: ''
     })
+    // 清理的时候也要穿
+    this.props.onInput()
   }
   blur() {
     this.query.current.blur()

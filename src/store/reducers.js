@@ -75,3 +75,28 @@ export function topList(state = initState.topList, action) {
       return state
   }
 }
+
+export function searchHistory(state = initState.searchHistory, action) {
+  switch (action.type) {
+    case types.SET_SEARCH_HISTOYR:
+      return [...action.payload]
+    default:
+      return state
+  }
+}
+export function playHistory(state = initState.playHistory, action) {
+  switch (action.type) {
+    case types.SET_PLAY_HISTORY:
+      return [...action.payload]
+    default:
+      return state
+  }
+}
+export function favoriteHistory(state = initState.favoriteHistory, action) {
+  switch (action.type) {
+    case types.SET_FAVORITE_LIST:
+      return [...action.payload]
+    default:
+      return state
+  }
+}

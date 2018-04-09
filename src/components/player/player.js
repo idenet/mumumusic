@@ -90,9 +90,9 @@ export default class Player extends Component {
       return false
     }
     // 这个是vue中$nextTick的问题，react中不需要。？
-    // this.setState({
-    //   songReady: false
-    // })
+    this.setState({
+      songReady: false
+    })
     this.canLyricPlay = false
     // 切换歌曲，重置歌词数据
     if (this.state.currentLyric) {
@@ -105,16 +105,11 @@ export default class Player extends Component {
     }
     let audio = this.audio.current
     audio.src = nextSong.url
-    setTimeout(() => {
-      audio.play()
-    }, 20)
     clearTimeout(this.timer)
     this.timer = setTimeout(() => {
-      this.setState({
-        songReady: true
-      })
-    }, 5000)
-    this.getLyric(nextSong)
+      audio.play()
+      this.getLyric(nextSong)
+    }, 20)
   }
   _watchPlaying(nextProps) {
     if (!this.state.songReady) {
@@ -318,7 +313,6 @@ export default class Player extends Component {
   /*************动画结束 */
   /*************播放器 */
   ready() {
-    clearTimeout(this.timer)
     this.setState({
       songReady: true
     })
@@ -340,15 +334,14 @@ export default class Player extends Component {
     }
   }
   paused() {
-    // 如果网页有多个音频
-    this.props.set_playing(false)
-    if (this.state.currentLyric) {
-      this.state.currentLyric.stop()
-    }
+    // 如果网页有多个音频 加上这个方法自动播放回报错
+    // this.props.set_playing(false)
+    // if (this.state.currentLyric) {
+    //   this.state.currentLyric.stop()
+    // }
   }
   error() {
     // 出错则设置为true，不让程序crash
-    clearTimeout(this.timer)
     this.setState({
       songReady: true
     })
@@ -394,9 +387,6 @@ export default class Player extends Component {
         this.handleTogglePlaying()
       }
     }
-    this.setState({
-      songReady: false
-    })
   }
   prev() {
     if (!this.state.songReady) {
@@ -415,9 +405,6 @@ export default class Player extends Component {
         this.handleTogglePlaying()
       }
     }
-    this.setState({
-      songReady: false
-    })
   }
   handleTogglePlaying(e) {
     if (e) {

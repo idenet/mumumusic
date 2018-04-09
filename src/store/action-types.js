@@ -16,3 +16,11 @@ export const SET_SEQUENCE_LIST = 'SET_SEQUENCE_LIST'
 export const SET_PLAY_MODE = 'SET_PLAY_MODE'
 
 export const SET_CURRENT_INDEX = 'SET_CURRENT_INDEX'
+
+// localStorage 存储
+
+export const SET_SEARCH_HISTOYR = 'SET_SEARCH_HISTOYR'
+
+export const SET_PLAY_HISTORY = 'SET_PLAY_HISTORY'
+
+export const SET_FAVORITE_LIST = 'SET_FAVORITE_LIST'

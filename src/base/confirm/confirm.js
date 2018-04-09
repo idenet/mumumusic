@@ -50,6 +50,7 @@ export default class Confirm extends Component {
             : 'confirm-content')
         }
         onClick={e => e.stopPropagation()}
+        // 用这种不怎么好
         style={{ display: !this.state.showFlag ? 'none' : 'block' }}
       >
         <div className="confirm-wrapper">

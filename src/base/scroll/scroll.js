@@ -14,7 +14,9 @@ export default class componentName extends Component {
     refreshDelay: PropTypes.number, //刷新
     direction: PropTypes.string,
     className: PropTypes.string,
-    onScroll: PropTypes.func
+    onScroll: PropTypes.func,
+    onPullup: PropTypes.func,
+    onBeforeScroll: PropTypes.func
   }
 
   static defaultProps = {
@@ -27,7 +29,9 @@ export default class componentName extends Component {
     refreshDelay: 20,
     direction: this.DIRECTION_V,
     className: 'scroll-wrapper',
-    onScroll: null
+    onScroll: f => f,
+    onPullup: f => f,
+    onBeforeScroll: f => f
   }
   constructor(props) {
     super(props)
@@ -62,6 +66,18 @@ export default class componentName extends Component {
     if (this.props.listenScroll) {
       this.scroll.on('scroll', pos => {
         this.props.onScroll(pos)
+      })
+    }
+    if (this.props.pullup) {
+      this.scroll.on('scrollEnd', () => {
+        if (this.scroll.y <= this.scroll.maxScrollY + 50) {
+          this.props.onPullup()
+        }
+      })
+    }
+    if (this.props.beforeScroll) {
+      this.scroll.on('beforeScrollStart', () => {
+        this.props.onBeforeScroll()
       })
     }
   }

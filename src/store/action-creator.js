@@ -39,3 +39,18 @@ export const set_currentIndex = index => ({
   type: types.SET_CURRENT_INDEX,
   payload: index
 })
+
+export const set_search_history = list => ({
+  type: types.SET_SEARCH_HISTOYR,
+  payload: list
+})
+
+export const set_play_history = list => ({
+  type: types.SET_PLAY_HISTORY,
+  payload: list
+})
+
+export const set_favorite_history = list => ({
+  type: types.SET_FAVORITE_LIST,
+  payload: list
+})
