@@ -36,9 +36,6 @@ export default class Recommend extends Component {
     this._getRecommend()
     this._getDiscList()
   }
-  componentWillUnmount() {
-    clearTimeout(this.timer)
-  }
   _getRecommend() {
     getRecommend().then(res => {
       if (res.code === ERR_OK) {

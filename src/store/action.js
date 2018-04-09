@@ -111,6 +111,37 @@ export function insertSong(song) {
   }
 }
 
+export function deleteSong(song) {
+  return (dispatch, getState) => {
+    let player = getState().player
+    let playList = player.playList.slice()
+    let sequenceList = player.sequenceList.slice()
+    let currentIndex = player.currentIndex
+
+    let fIndex = findIndex(playList, song) //找到删除曲目的下标
+    playList.splice(fIndex, 1)
+
+    let fsIndex = findIndex(sequenceList, song)
+    sequenceList.splice(fsIndex, 1)
+
+    // 当要删除下标在播放曲目的前面
+    if (currentIndex > fIndex || currentIndex === playList.length) {
+      currentIndex--
+    }
+
+    dispatch(actions.set_playList(playList))
+    dispatch(actions.set_sequenceList(sequenceList))
+    dispatch(actions.set_currentIndex(currentIndex))
+
+    // 当只有一首歌
+    if (!playList.length) {
+      dispatch(actions.set_playing(false))
+    } else {
+      dispatch(actions.set_playing(true))
+    }
+  }
+}
+
 /**
  * 清空播放列表
  *

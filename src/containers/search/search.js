@@ -3,13 +3,16 @@ import React, { Component } from 'react'
 // redux
 import { connect } from 'react-redux'
 import { set_singer } from 'store/action-creator'
-import { insertSong } from 'store/action'
+import { insertSong, clearSearchHistory } from 'store/action'
 // url
 import { Route } from 'react-router-dom'
 import SingerDetail from 'components/singer-detail/singer-detail'
 // 子组件
 import SearchBox from 'base/search-box/search-box'
 import Suggest from 'components/suggest/suggest'
+import Scroll from 'base/scroll/scroll'
+import SearchList from 'base/search-list/search-list'
+import Confirm from 'base/confirm/confirm'
 //api
 import { getHotKey } from 'api/search'
 import { ERR_OK } from 'api/config'
@@ -20,7 +23,7 @@ import './search.styl'
 
 const SINGER_TYPE = 'singer'
 @searchHOC
-@connect(null, { set_singer, insertSong })
+@connect(null, { set_singer, insertSong, clearSearchHistory })
 export default class Search extends Component {
   constructor() {
     super()
@@ -28,6 +31,9 @@ export default class Search extends Component {
       hotKey: []
     }
     this.selectItem = this.selectItem.bind(this)
+    this.showConfirm = this.showConfirm.bind(this)
+    this.probeType = 3
+    this.confirm = React.createRef()
   }
   componentDidMount() {
     this._getHotKey()
@@ -56,8 +62,12 @@ export default class Search extends Component {
     }
     this.props.saveSearch()
   }
+  showConfirm() {
+    this.confirm.current.show()
+  }
   render() {
-    let { changeQuery, match } = this.props
+    let { changeQuery, match, searchHistory } = this.props
+    let shortcut = this.state.hotKey.concat(searchHistory)
     return (
       <div className="search">
         <div className="search-box-wrapper">
@@ -68,27 +78,47 @@ export default class Search extends Component {
         </div>
         {!changeQuery ? (
           <div className="shortcut-wrapper">
-            <div className="shortcut">
-              <div className="hot-key">
-                <h1 className="title">热门搜索</h1>
-                <ul>
-                  {this.state.hotKey
-                    ? this.state.hotKey.map(v => (
-                        <li
-                          className="item"
-                          key={v.k}
-                          onClick={() => this.props.addQuery(v.k)}
-                        >
-                          <span>{v.k}</span>
-                        </li>
-                      ))
-                    : null}
-                </ul>
+            <Scroll
+              className="shortcut"
+              probeType={this.probeType}
+              data={shortcut}
+            >
+              <div>
+                <div className="hot-key">
+                  <h1 className="title">热门搜索</h1>
+                  <ul>
+                    {this.state.hotKey
+                      ? this.state.hotKey.map(v => (
+                          <li
+                            className="item"
+                            key={v.k}
+                            onClick={() => this.props.addQuery(v.k)}
+                          >
+                            <span>{v.k}</span>
+                          </li>
+                        ))
+                      : null}
+                  </ul>
+                </div>
+                {searchHistory.length > 0 ? (
+                  <div className="search-history">
+                    <h1 className="title">
+                      <span className="text">搜索历史</span>
+                      <span className="clear" onClick={this.showConfirm}>
+                        <i className="icon-clear" />
+                      </span>
+                    </h1>
+                    <SearchList
+                      searches={searchHistory}
+                      selectItem={this.props.addQuery}
+                      deleteOne={this.props.deleteSearchHistory}
+                    />
+                  </div>
+                ) : null}
               </div>
-            </div>
+            </Scroll>
           </div>
-        ) : null}
-        {changeQuery ? (
+        ) : (
           <div className="search-result">
             <Suggest
               query={changeQuery}
@@ -96,7 +126,13 @@ export default class Search extends Component {
               selectItem={this.selectItem}
             />
           </div>
-        ) : null}
+        )}
+        <Confirm
+          ref={this.confirm}
+          text="是否清空所有搜索历史"
+          confirmBtnText="清空"
+          confirm={this.props.clearSearchHistory}
+        />
         <Route path={`${match.url}/:id`} component={SingerDetail} />
       </div>
     )

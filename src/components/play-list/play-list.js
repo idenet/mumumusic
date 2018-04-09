@@ -6,6 +6,7 @@ import { playerHOC } from 'common/js/HOC'
 //子组件
 import Scroll from 'base/scroll/scroll'
 import Confirm from 'base/confirm/confirm'
+import AddSong from 'components/add-song/add-song'
 //util
 import { playMode } from 'common/js/config'
 import classnames from 'classnames'
@@ -19,17 +20,21 @@ export default class PlayList extends Component {
   constructor() {
     super()
     this.state = {
-      showFlag: false
+      showFlag: false,
+      showSong: false
     }
     this.probeType = 3
     this.hide = this.hide.bind(this)
     this.show = this.show.bind(this)
     this.confirmClear = this.confirmClear.bind(this)
     this.showConfirm = this.showConfirm.bind(this)
+    this.showAddSong = this.showAddSong.bind(this)
+    this.hideAddSong = this.hideAddSong.bind(this)
     //ref
     this.listContent = React.createRef()
     this.listGroup = React.createRef()
     this.confirm = React.createRef()
+    this.addsong = React.createRef()
   }
   shouldComponentUpdate(nextProps, nextState) {
     const oldSong = this.props.player.currentSong
@@ -44,6 +49,7 @@ export default class PlayList extends Component {
     const index = list.findIndex(v => {
       return song.id === v.id
     })
+    if (!this.listContent.current) return
     this.listContent.current.scrollToElement(
       [...this.listGroup.current.children[0].children][index],
       300
@@ -91,9 +97,26 @@ export default class PlayList extends Component {
     this.confirm.current.show()
   }
   confirmClear() {
-    console.log(1)
     this.props.deleteSongList()
     this.hide()
+  }
+  toggleFavorite(v, e) {
+    e.stopPropagation()
+    this.props.toggleFavorite(v)
+  }
+  deleteOne(v, e) {
+    e.stopPropagation()
+    this.props.deleteSong(v)
+  }
+  showAddSong() {
+    this.setState({
+      showSong: true
+    })
+  }
+  hideAddSong() {
+    this.setState({
+      showSong: false
+    })
   }
   render() {
     const { mode, sequenceList, currentSong } = this.props.player
@@ -104,7 +127,7 @@ export default class PlayList extends Component {
     return (
       <CSSTransition
         in={this.state.showFlag}
-        timeout={200}
+        timeout={300}
         classNames="list-fade"
         onExit={el => this.exit(el)}
         onExited={el => this.exited(el)}
@@ -147,10 +170,16 @@ export default class PlayList extends Component {
                           })}
                         />
                         <span className="text">{v.name}</span>
-                        <span className="like">
-                          <i />
+                        <span
+                          className="like"
+                          onClick={e => this.toggleFavorite(v, e)}
+                        >
+                          <i className={this.props.getFavoriteIcon(v)} />
                         </span>
-                        <span className="delete">
+                        <span
+                          className="delete"
+                          onClick={e => this.deleteOne(v, e)}
+                        >
                           <i className="icon-delete" />
                         </span>
                       </li>
@@ -160,7 +189,7 @@ export default class PlayList extends Component {
               </div>
             </Scroll>
             <div className="list-operate">
-              <div className="add">
+              <div className="add" onClick={this.showAddSong}>
                 <i className="icon-add" />
                 <span className="text">添加歌曲到列表</span>
               </div>
@@ -175,6 +204,7 @@ export default class PlayList extends Component {
             confirmBtnText="清空"
             confirm={this.confirmClear}
           />
+          <AddSong showFlag={this.state.showSong} hide={this.hideAddSong} />
         </div>
       </CSSTransition>
     )

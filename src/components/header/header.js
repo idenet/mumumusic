@@ -9,7 +9,7 @@ export default class Header extends Component {
       <div className="header">
         <div className="header-icon" />
         <div className="header-text">Chicken Music</div>
-        <Link className="header-mine" to="/mine">
+        <Link className="header-mine" to="/user">
           <i className="icon-mine" />
         </Link>
       </div>

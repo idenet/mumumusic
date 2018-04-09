@@ -7,7 +7,15 @@ import {
   set_playMode,
   set_playList
 } from 'store/action-creator'
-import { deleteSongList, saveSearchHistory } from 'store/action'
+import {
+  deleteSongList,
+  saveSearchHistory,
+  deleteSearchHistory,
+  saveFavoriteHistory,
+  deleteFavoriteHistory,
+  deleteSong,
+  insertSong
+} from 'store/action'
 
 import { playMode } from 'common/js/config'
 import { shuffle, debounce } from 'common/js/util'
@@ -18,6 +26,8 @@ export const playerHOC = WrapperComponent => {
       super(props)
       this.state = {}
       this.changeMode = this.changeMode.bind(this)
+      this.getFavoriteIcon = this.getFavoriteIcon.bind(this)
+      this.toggleFavorite = this.toggleFavorite.bind(this)
     }
     changeMode() {
       const mode = (this.props.player.mode + 1) % 3
@@ -29,13 +39,32 @@ export const playerHOC = WrapperComponent => {
         list = this.props.player.sequenceList
       }
       this.props.set_playList(list)
-      this.resetCurrentIndex(list)
+      this._resetCurrentIndex(list)
     }
-    resetCurrentIndex(list) {
+    _resetCurrentIndex(list) {
       let index = list.findIndex(v => {
         return v.id === this.props.player.currentSong.id
       })
       this.props.set_currentIndex(index)
+    }
+    toggleFavorite(song) {
+      if (this._isFavorite(song)) {
+        this.props.deleteFavoriteHistory(song)
+      } else {
+        this.props.saveFavoriteHistory(song)
+      }
+    }
+    getFavoriteIcon(song) {
+      return this._isFavorite(song)
+        ? 'icon icon-favorite'
+        : 'icon icon-not-favorite'
+    }
+    _isFavorite(song) {
+      // console.log(this.props.favoriteHistory, song)
+      const index = this.props.favoriteHistory.findIndex(item => {
+        return item.id === song.id
+      })
+      return index > -1
     }
     render() {
       const mode = this.props.player.mode
@@ -48,6 +77,8 @@ export const playerHOC = WrapperComponent => {
           changeMode={this.changeMode}
           {...this.props}
           modeIcon={modeIcon}
+          getFavoriteIcon={this.getFavoriteIcon}
+          toggleFavorite={this.toggleFavorite}
           ref={this.props.forwardedRef}
         />
       )
@@ -58,13 +89,16 @@ export const playerHOC = WrapperComponent => {
     set_playList,
     set_playMode,
     set_playing,
-    deleteSongList
+    deleteSongList, // 只能放到这里
+    saveFavoriteHistory,
+    deleteFavoriteHistory,
+    deleteSong
   })(PlayerHOC)
   return React.forwardRef((props, ref) => (
     <ForwardRefCompoent {...props} forwardedRef={ref} />
   ))
 }
-
+// react-router还不支持16.3 的createRef
 export const searchHOC = WrapperComponent => {
   class Search extends Component {
     constructor(props) {
@@ -77,13 +111,14 @@ export const searchHOC = WrapperComponent => {
       this.saveSearch = this.saveSearch.bind(this)
       this.searchBox = React.createRef()
     }
-    // 这种算是调用就执行吗
+    // 这种算是调用就执行
     onQueryChange = debounce(query => {
       this.setState({
         query
       })
     }, 300)
     blurInput() {
+      console.log(this.searchBox)
       this.searchBox.current.blur()
     }
     saveSearch() {
@@ -106,5 +141,10 @@ export const searchHOC = WrapperComponent => {
       )
     }
   }
-  return connect(state => state, { saveSearchHistory })(Search)
+  const ForwardSearchHOC = connect(state => state, {
+    saveSearchHistory,
+    deleteSearchHistory,
+    insertSong
+  })(Search)
+  return ForwardSearchHOC
 }

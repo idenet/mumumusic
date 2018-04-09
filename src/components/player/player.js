@@ -6,6 +6,7 @@ import Scroll from 'base/scroll/scroll'
 // redux
 import { connect } from 'react-redux'
 import { set_fullScreen } from 'store/action-creator'
+import { savePlayHistory } from 'store/action'
 //util
 import { playMode } from 'common/js/config'
 import { playerHOC } from 'common/js/HOC'
@@ -25,7 +26,7 @@ const transform = prefix('transform')
 const transitionDuration = prefix('transitionDuration')
 const timeExp = /\[(\d{2}):(\d{2}):(\d{2})]/g
 @playerHOC
-@connect(null, { set_fullScreen })
+@connect(null, { set_fullScreen, savePlayHistory })
 export default class Player extends Component {
   constructor() {
     super()
@@ -89,7 +90,6 @@ export default class Player extends Component {
     ) {
       return false
     }
-    // 这个是vue中$nextTick的问题，react中不需要。？
     this.setState({
       songReady: false
     })
@@ -317,6 +317,7 @@ export default class Player extends Component {
       songReady: true
     })
     this.canLyricPlay = true // 开始播放歌词
+    this.props.savePlayHistory(this.props.player.currentSong) // 将当前播放歌曲存到localstorage
     // 如果歌曲的播放晚于歌词的出现，播放的时候需要同步歌词
     if (this.state.currentLyric && !this.state.isPureMusic) {
       this.state.currentLyric.seek(this.state.currentTime * 1000)
@@ -600,7 +601,10 @@ export default class Player extends Component {
                   <i className="icon-next" onClick={this.next} />
                 </div>
                 <div className={`icon i-right ${disableCls}`}>
-                  <i className="icon icon-not-favorite" />
+                  <i
+                    className={this.props.getFavoriteIcon(currentSong)}
+                    onClick={() => this.props.toggleFavorite(currentSong)}
+                  />
                 </div>
               </div>
             </div>

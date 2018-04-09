@@ -35,11 +35,11 @@ export default class componentName extends Component {
   }
   constructor(props) {
     super(props)
+    this.state = {}
     this.DIRECTION_H = 'horizontal'
     this.DIRECTION_H = 'horizontal'
     this.scrollWrapper = React.createRef()
   }
-
   componentDidMount() {
     // 价格延时顺滑很多？？？？
     setTimeout(() => {

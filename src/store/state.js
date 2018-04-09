@@ -14,7 +14,7 @@ const state = {
     currentSong: {} // 当前播放歌曲
   },
   topList: [],
-  searchHistory: loadSearch,
+  searchHistory: loadSearch(),
   playHistory: [],
   favoriteHistory: []
 }

@@ -16,12 +16,31 @@ import Recommend from 'containers/recommend/recommend'
 import Singer from 'containers/singer/singer'
 import Rank from 'containers/rank/rank'
 import Search from 'containers/search/search'
+import User from 'containers/user/user'
 
 // 播放器
 import Player from 'components/player/player'
-// css
+// history
+import { connect } from 'react-redux'
+import { set_play_history, set_favorite_history } from 'store/action-creator'
+import { loadPlay, loadFavorite } from 'common/js/cache'
+import { processSongsUrl } from 'common/js/song'
 
+@connect(null, { set_play_history, set_favorite_history })
 class App extends Component {
+  componentDidMount() {
+    const playSongs = loadPlay()
+
+    processSongsUrl(playSongs).then(songs => {
+      this.props.set_play_history(songs)
+    })
+
+    const favoriteSongs = loadFavorite()
+
+    processSongsUrl(favoriteSongs).then(songs => {
+      this.props.set_favorite_history(songs)
+    })
+  }
   render() {
     return (
       <Router>
@@ -35,6 +54,7 @@ class App extends Component {
                 <Route path="/recommend" component={Recommend} />
                 <Route path="/singer" component={Singer} />
                 <Route path="/rank" component={Rank} />
+                <Route path="/user" component={User} />
                 <Route path="/search" component={Search} />
               </Switch>
             </CSSTransition>
