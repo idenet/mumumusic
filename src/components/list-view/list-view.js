@@ -64,7 +64,7 @@ export default class ListView extends Component {
       }, 20)
     }
 
-    // 滚动实时改变scrollY，进而改变currentIndex值，这两个值都需要判断，如果改变了，需要更新视图改变fixedTitle
+    // 不加这个currentIndex更新较慢··
     if (this.state.currentIndex !== nextState.currentIndex) {
       return true
     }
