@@ -18,11 +18,12 @@ import {
  *
  * @author 香香鸡
  * @export
- * @param {Array, Number} { list, index, mode }
+ * @param {Array, Number} { list, index
  * @returns
  */
-export function selectPlay({ list, index, mode }) {
-  return dispatch => {
+export function selectPlay({ list, index }) {
+  return (dispatch, getState) => {
+    let mode = getState().player.mode
     dispatch(actions.set_sequenceList(list))
     if (mode === playMode.random) {
       let randomList = shuffle(list)

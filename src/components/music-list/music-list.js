@@ -56,6 +56,7 @@ export default class MusicLlist extends Component {
     this.bgLayer = React.createRef()
     this.list = React.createRef()
     this.playBtn = React.createRef()
+    this.musicList = React.createRef()
     // scroll 常量
     this.listenScroll = true
     this.probeType = 3
@@ -70,6 +71,12 @@ export default class MusicLlist extends Component {
     this.minTranslateY = -this.imageHeight + RESERVED_HEIGHT
     // 设置scroll的top为图片高度
     this.list.current.scrollWrapper.current.style.top = `${this.imageHeight}px`
+  }
+  shouldComponentUpdate(nextProps) {
+    const bottom = nextProps.player.playList.length > 0 ? '60px' : ''
+    this.musicList.current.style.bottom = bottom
+    this.list.current.refresh()
+    return true
   }
   // dom事件
   handleBack() {
@@ -87,8 +94,7 @@ export default class MusicLlist extends Component {
     this.props.selectPlay &&
       this.props.selectPlay({
         list: this.props.songs,
-        index,
-        mode: this.props.player.mode
+        index
       })
   }
   onScroll(scroll) {
@@ -128,7 +134,7 @@ export default class MusicLlist extends Component {
   }
   render() {
     return (
-      <div className="music-list">
+      <div className="music-list" ref={this.musicList}>
         <div className="back" onClick={this.handleBack}>
           <i className="icon-back" />
         </div>

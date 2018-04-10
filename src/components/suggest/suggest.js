@@ -42,6 +42,7 @@ export default class Suggest extends Component {
     // bind
     this.searchMore = this.searchMore.bind(this)
     this.getIconCls = this.getIconCls.bind(this)
+    this.refresh = this.refresh.bind(this)
   }
   componentDidMount() {
     this._search(this.props.query)
@@ -141,6 +142,9 @@ export default class Suggest extends Component {
     } else {
       return { __html: `${v.name}-${v.singer}` }
     }
+  }
+  refresh() {
+    this.suggest.current.refresh()
   }
   render() {
     return (

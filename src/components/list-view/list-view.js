@@ -34,6 +34,7 @@ export default class ListView extends Component {
     this.onTouchStart = this.onTouchStart.bind(this)
     this.onTouchMove = this.onTouchMove.bind(this)
     this.onTouchEnd = this.onTouchEnd.bind(this)
+    this.refresh = this.refresh.bind(this)
     // 不知道为什么一定要放在这里才有效果， 异步的原因？
     this.probeType = 3
     this.listenScroll = true
@@ -85,6 +86,9 @@ export default class ListView extends Component {
       scrollY: scroll.y
     })
     forceCheck()
+  }
+  refresh() {
+    this.listview.current.refresh()
   }
   //*************动画 */
   onTouchStart(e) {
@@ -150,7 +154,7 @@ export default class ListView extends Component {
     })
     return false
   }
-  _getDiff(nextState) {
+  _getDiff(nextProps, nextState) {
     let newVal = nextState.diff
     let fixedTop =
       newVal > 0 && newVal < TITLE_HEIGHT ? newVal - TITLE_HEIGHT : 0

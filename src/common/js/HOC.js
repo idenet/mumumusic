@@ -118,7 +118,6 @@ export const searchHOC = WrapperComponent => {
       })
     }, 300)
     blurInput() {
-      console.log(this.searchBox)
       this.searchBox.current.blur()
     }
     saveSearch() {

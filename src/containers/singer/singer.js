@@ -20,7 +20,7 @@ import './singer.styl'
 
 const HOT_SINGER_LEN = 10
 const HOT_NAME = '热门'
-@connect(null, { set_singer })
+@connect(state => state, { set_singer })
 export default class Singer extends Component {
   constructor(props) {
     super(props)
@@ -28,9 +28,18 @@ export default class Singer extends Component {
       singers: []
     }
     this.selctSinger = this.selctSinger.bind(this)
+
+    this.list = React.createRef()
+    this.singer = React.createRef()
   }
   componentDidMount() {
     this._getSingerList()
+  }
+  shouldComponentUpdate(nextProps) {
+    const bottom = nextProps.player.playList.length > 0 ? '60px' : ''
+    this.singer.current.style.bottom = bottom
+    this.list.current.refresh()
+    return true
   }
   _getSingerList() {
     getSingerList().then(res => {
@@ -105,8 +114,12 @@ export default class Singer extends Component {
   render() {
     let { match } = this.props
     return (
-      <div className="singer-wrapper">
-        <ListView data={this.state.singers} selectItem={this.selctSinger} />
+      <div className="singer-wrapper" ref={this.singer}>
+        <ListView
+          data={this.state.singers}
+          selectItem={this.selctSinger}
+          ref={this.list}
+        />
         <Route path={`${match.url}/:id`} component={SingerDetail} />
       </div>
     )

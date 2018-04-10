@@ -23,7 +23,7 @@ import './search.styl'
 
 const SINGER_TYPE = 'singer'
 @searchHOC
-@connect(null, { set_singer, insertSong, clearSearchHistory })
+@connect(state => state, { set_singer, insertSong, clearSearchHistory })
 export default class Search extends Component {
   constructor() {
     super()
@@ -34,9 +34,26 @@ export default class Search extends Component {
     this.showConfirm = this.showConfirm.bind(this)
     this.probeType = 3
     this.confirm = React.createRef()
+    this.shortcutWrapper = React.createRef()
+    this.shortcut = React.createRef()
+    this.searchResult = React.createRef()
+    this.suggest = React.createRef()
   }
   componentDidMount() {
     this._getHotKey()
+  }
+  shouldComponentUpdate(nextProps) {
+    const bottom = nextProps.player.playList.length > 0 ? '60px' : ''
+    if (this.shortcutWrapper.current) {
+      this.shortcutWrapper.current.style.bottom = bottom
+      this.shortcut.current.refresh()
+    }
+
+    if (this.searchResult.current) {
+      this.searchResult.current.style.bottom = bottom
+      this.suggest.current.refresh()
+    }
+    return true
   }
   _getHotKey() {
     getHotKey().then(res => {
@@ -77,11 +94,12 @@ export default class Search extends Component {
           />
         </div>
         {!changeQuery ? (
-          <div className="shortcut-wrapper">
+          <div className="shortcut-wrapper" ref={this.shortcutWrapper}>
             <Scroll
               className="shortcut"
               probeType={this.probeType}
               data={shortcut}
+              ref={this.shortcut}
             >
               <div>
                 <div className="hot-key">
@@ -119,11 +137,12 @@ export default class Search extends Component {
             </Scroll>
           </div>
         ) : (
-          <div className="search-result">
+          <div className="search-result" ref={this.searchResult}>
             <Suggest
               query={changeQuery}
               onBeforeScroll={this.props.blurInput}
               selectItem={this.selectItem}
+              ref={this.suggest}
             />
           </div>
         )}

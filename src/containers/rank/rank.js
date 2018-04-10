@@ -18,7 +18,7 @@ import LazyLoad, { forceCheck } from 'react-lazyload'
 
 import './rank.styl'
 
-@connect(null, { set_topList })
+@connect(state => state, { set_topList })
 export default class Rank extends Component {
   constructor() {
     super()
@@ -27,9 +27,18 @@ export default class Rank extends Component {
     }
     this.probeType = 3
     this.listenScroll = true
+
+    this.list = React.createRef()
+    this.rank = React.createRef()
   }
   componentDidMount() {
     this._getTopList()
+  }
+  shouldComponentUpdate(nextProps) {
+    const bottom = nextProps.player.playList.length > 0 ? '60px' : ''
+    this.rank.current.style.bottom = bottom
+    this.list.current.refresh()
+    return true
   }
   _getTopList() {
     getTopList().then(res => {
@@ -48,13 +57,14 @@ export default class Rank extends Component {
   render() {
     const { match } = this.props
     return (
-      <div className="rank-wrapper">
+      <div className="rank-wrapper" ref={this.rank}>
         <Scroll
           className="top-list"
           listenScroll={this.listenScroll}
           probeType={this.probeType}
           data={this.state.topList}
           onScroll={() => forceCheck()}
+          ref={this.list}
         >
           <ul>
             {this.state.topList.length

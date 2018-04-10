@@ -20,7 +20,7 @@ import { set_disc } from 'store/action-creator'
 // css
 import './recommend.styl'
 
-@connect(null, { set_disc }) // 设置state的disc
+@connect(state => state, { set_disc }) // 设置state的disc
 export default class Recommend extends Component {
   constructor(props) {
     super(props)
@@ -30,11 +30,20 @@ export default class Recommend extends Component {
     }
     this.probeType = 3
     this.listenScroll = true
+
+    this.recommend = React.createRef()
+    this.list = React.createRef()
   }
 
   componentDidMount() {
     this._getRecommend()
     this._getDiscList()
+  }
+  shouldComponentUpdate(nextProps) {
+    const bottom = nextProps.player.playList.length > 0 ? '60px' : ''
+    this.recommend.current.style.bottom = bottom
+    this.list.current.refresh()
+    return true
   }
   _getRecommend() {
     getRecommend().then(res => {
@@ -62,13 +71,14 @@ export default class Recommend extends Component {
   }
   render() {
     return (
-      <div className="recommend">
+      <div className="recommend" ref={this.recommend}>
         <Scroll
           className="recommend-content"
           data={this.state.discList}
           listenScroll={this.listenScroll}
           probeType={this.probeType}
           onScroll={() => forceCheck()}
+          ref={this.list}
         >
           <div>
             <div className="slider-wrapper">

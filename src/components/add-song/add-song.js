@@ -64,7 +64,9 @@ export default class AddSong extends Component {
   }
   // hack正确的做法应该是使用三木运算选择渲染，但是这样就没有动画了
   enter(e) {
-    this.playScroll.current.refresh()
+    if (this.playScroll.current) {
+      this.playScroll.current.refresh()
+    }
   }
   render() {
     const { changeQuery, playHistory, searchHistory } = this.props
