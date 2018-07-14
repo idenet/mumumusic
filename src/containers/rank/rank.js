@@ -18,7 +18,10 @@ import LazyLoad, { forceCheck } from 'react-lazyload'
 
 import './rank.styl'
 
-@connect(state => state, { set_topList })
+@connect(
+  state => state,
+  { set_topList }
+)
 export default class Rank extends Component {
   constructor() {
     super()

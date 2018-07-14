@@ -1,6 +1,5 @@
-# react-musc
+# mumumusic
 
-学习 react，将慕课网 vue2.0 的音乐课程改写成 react 的
 
 ## 运行
 
